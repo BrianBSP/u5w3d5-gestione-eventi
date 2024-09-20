@@ -51,4 +51,5 @@ public class UtentiService {
     public Utente findByEmail(String email) {
         return utenteRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'utente con l'email " + email + " non è stato trovato."));
     }
+
 }

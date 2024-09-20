@@ -2,6 +2,7 @@ package brianpelinku.u5w3d5_gestione_eventi.services;
 
 import brianpelinku.u5w3d5_gestione_eventi.entities.Evento;
 import brianpelinku.u5w3d5_gestione_eventi.entities.Utente;
+import brianpelinku.u5w3d5_gestione_eventi.exceptions.BadRequestException;
 import brianpelinku.u5w3d5_gestione_eventi.exceptions.NotFoundException;
 import brianpelinku.u5w3d5_gestione_eventi.payloads.NewEventoDTO;
 import brianpelinku.u5w3d5_gestione_eventi.payloads.NewEventoRespDTO;
@@ -27,6 +28,9 @@ public class EventiService {
     public NewEventoRespDTO saveViaggio(NewEventoDTO body) {
 
         Utente organizzatore = this.utentiService.findById(body.organizzatoreId());
+
+        if (this.eventoRepositoy.existsByLuogoAndDataEvento(body.luogo(), LocalDate.parse(body.dataEvento())))
+            throw new BadRequestException("Evento già presente a " + body.luogo() + " il giorno " + body.dataEvento());
 
         Evento newEvento = new Evento();
         newEvento.setTitolo(body.titolo());
