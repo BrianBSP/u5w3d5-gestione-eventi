@@ -38,4 +38,12 @@ public class Utente {
     @JsonIgnore
     @OneToMany(mappedBy = "utenteId")
     private List<Prenotazioni> prenotazioniList;
+
+    public Utente(String nome, String cognome, String email, String password) {
+        this.nome = nome;
+        this.cognome = cognome;
+        this.email = email;
+        this.password = password;
+        this.ruoloUtente = RuoloUtente.UTENTE;
+    }
 }
