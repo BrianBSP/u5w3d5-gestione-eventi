@@ -32,7 +32,7 @@ public class Utente {
     private RuoloUtente ruoloUtente;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "organizzaoreId")
+    @OneToMany(mappedBy = "organizzatoreId")
     private List<Evento> eventoList;
 
     @JsonIgnore
