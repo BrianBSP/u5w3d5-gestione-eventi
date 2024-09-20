@@ -1,8 +1,6 @@
 package brianpelinku.u5w3d5_gestione_eventi.controllers;
 
 import brianpelinku.u5w3d5_gestione_eventi.entities.Utente;
-import brianpelinku.u5w3d5_gestione_eventi.exceptions.BadRequestException;
-import brianpelinku.u5w3d5_gestione_eventi.payloads.NewUtenteDTO;
 import brianpelinku.u5w3d5_gestione_eventi.payloads.NewUtenteRespDTO;
 import brianpelinku.u5w3d5_gestione_eventi.services.UtentiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/utenti")
@@ -32,22 +26,6 @@ public class UtentiController {
         return this.utentiService.findAll(page, size, sortBy);
     }
 
-    // creo un nuovo profilo per un nuovo utente
-    @PostMapping("/register")
-    @PreAuthorize("hasAuthority('ADMIN')") // solo gli admin possono registrare nuovi dipendenti
-    @ResponseStatus(HttpStatus.CREATED)
-    public NewUtenteRespDTO createUtente(@RequestBody @Validated NewUtenteDTO body, BindingResult validation) {
-        if (validation.hasErrors()) {
-            String messages = validation
-                    .getAllErrors()
-                    .stream()
-                    .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.joining(". "));
-            throw new BadRequestException("Segnalazione Errori nel Payload. " + messages);
-        } else {
-            return new NewUtenteRespDTO(this.utentiService.saveUtente(body).utenteId());
-        }
-    }
 
     // GET byId
     @GetMapping("/{utenteId}")
