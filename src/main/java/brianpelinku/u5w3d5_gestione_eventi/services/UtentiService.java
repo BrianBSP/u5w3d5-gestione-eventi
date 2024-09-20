@@ -1,6 +1,7 @@
 package brianpelinku.u5w3d5_gestione_eventi.services;
 
 import brianpelinku.u5w3d5_gestione_eventi.entities.Utente;
+import brianpelinku.u5w3d5_gestione_eventi.enums.RuoloUtente;
 import brianpelinku.u5w3d5_gestione_eventi.exceptions.BadRequestException;
 import brianpelinku.u5w3d5_gestione_eventi.exceptions.NotFoundException;
 import brianpelinku.u5w3d5_gestione_eventi.payloads.NewUtenteDTO;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,12 +21,17 @@ public class UtentiService {
     @Autowired
     private UtenteRepository utenteRepository;
 
+    @Autowired
+    private PasswordEncoder bcrypt;
+
     public NewUtenteRespDTO saveUtente(NewUtenteDTO body) {
 
         this.utenteRepository.findByEmail(body.email()).ifPresent(author -> {
             throw new BadRequestException("L'email " + body.email() + " è già in uso.");
         });
-        Utente newUtente = new Utente(body.nome(), body.cognome(), body.email(), body.password());
+
+
+        Utente newUtente = new Utente(body.nome(), body.cognome(), body.email(), bcrypt.encode(body.password()), RuoloUtente.valueOf(body.ruolo()));
 
         // salvo il nuovo record
         return new NewUtenteRespDTO(this.utenteRepository.save(newUtente).getId());

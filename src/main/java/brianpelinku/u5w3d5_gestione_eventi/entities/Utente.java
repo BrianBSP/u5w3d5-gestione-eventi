@@ -43,12 +43,12 @@ public class Utente implements UserDetails {
     @OneToMany(mappedBy = "utenteId")
     private List<Prenotazioni> prenotazioniList;
 
-    public Utente(String nome, String cognome, String email, String password) {
+    public Utente(String nome, String cognome, String email, String password, RuoloUtente ruolo) {
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.password = password;
-        this.ruoloUtente = RuoloUtente.UTENTE;
+        this.ruoloUtente = ruolo;
     }
 
     @Override

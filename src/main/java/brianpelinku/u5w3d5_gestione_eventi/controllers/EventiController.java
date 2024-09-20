@@ -23,9 +23,9 @@ public class EventiController {
 
     // POST --> creo un nuovo record --- +body
     @PostMapping
-    @PreAuthorize("hasAuthority('ORGANIZZATORE')")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE_EVENTI')")
     @ResponseStatus(HttpStatus.CREATED)
-    public NewEventoRespDTO saveEvento(@RequestBody @Validated NewEventoDTO viaggio, BindingResult validation) {
+    public NewEventoRespDTO saveEvento(@RequestBody @Validated NewEventoDTO evento, BindingResult validation) {
         if (validation.hasErrors()) {
             String messages = validation
                     .getAllErrors()
@@ -34,7 +34,7 @@ public class EventiController {
                     .collect(Collectors.joining(". "));
             throw new BadRequestException("Segnalazione Errori nel Payload. " + messages);
         } else {
-            return new NewEventoRespDTO(this.eventiService.saveViaggio(viaggio).eventoId());
+            return new NewEventoRespDTO(this.eventiService.saveEvento(evento).eventoId());
         }
     }
 
@@ -54,8 +54,9 @@ public class EventiController {
 
     // DELETE
     @DeleteMapping("/{eventiId}")
+    @PreAuthorize("hasAuthority('ORGANIZZATORE_EVENTI')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void findByIdAndDelete(@PathVariable int viaggiId) {
-        eventiService.findByIdAndDelete(viaggiId);
+    public void findByIdAndDelete(@PathVariable int eventiId) {
+        eventiService.findByIdAndDelete(eventiId);
     }
 }

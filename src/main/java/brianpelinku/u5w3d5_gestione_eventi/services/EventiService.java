@@ -25,7 +25,7 @@ public class EventiService {
     @Autowired
     private UtentiService utentiService;
 
-    public NewEventoRespDTO saveViaggio(NewEventoDTO body) {
+    public NewEventoRespDTO saveEvento(NewEventoDTO body) {
 
         Utente organizzatore = this.utentiService.findById(body.organizzatoreId());
 
@@ -44,19 +44,19 @@ public class EventiService {
         return new NewEventoRespDTO(this.eventoRepositoy.save(newEvento).getId());
     }
 
-    // cerco tutti gli utenti
+    // cerco tutti gli evento
     public Page<Evento> findAll(int page, int size, String sortBy) {
         if (page > 20) page = 20;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return this.eventoRepositoy.findAll(pageable);
     }
 
-    // cerco utenti byId
+    // cerco evento byId
     public Evento findById(int eventoId) {
         return this.eventoRepositoy.findById(eventoId).orElseThrow(() -> new NotFoundException(eventoId));
     }
 
-    // delete utente
+    // delete evento
     public void findByIdAndDelete(int eventoId) {
         Evento trovato = this.findById(eventoId);
         this.eventoRepositoy.delete(trovato);
