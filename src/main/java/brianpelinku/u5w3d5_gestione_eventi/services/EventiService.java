@@ -25,11 +25,16 @@ public class EventiService {
     @Autowired
     private UtentiService utentiService;
 
-    public NewEventoRespDTO saveEvento(NewEventoDTO body) {
+    public NewEventoRespDTO saveEvento(NewEventoDTO body, Utente utenteCorrente) {
 
-        Utente organizzatore = this.utentiService.findById(body.organizzatoreId());
+        LocalDate dataEvento = null;
+        try {
+            dataEvento = LocalDate.parse(body.dataEvento());
+        } catch (Exception e) {
+            throw new BadRequestException("Errore. Formato data richiesto: YYYY-MM-DD");
+        }
 
-        if (this.eventoRepositoy.existsByLuogoAndDataEvento(body.luogo(), LocalDate.parse(body.dataEvento())))
+        if (this.eventoRepositoy.existsByLuogoAndDataEvento(body.luogo(), dataEvento))
             throw new BadRequestException("Evento già presente a " + body.luogo() + " il giorno " + body.dataEvento());
 
         Evento newEvento = new Evento();
@@ -37,7 +42,7 @@ public class EventiService {
         newEvento.setDescrizione(body.descrizione());
         newEvento.setDataEvento(LocalDate.parse(body.dataEvento()));
         newEvento.setNumeroPostiDisponibili(body.numeroPostiDisponibili());
-        newEvento.setOrganizzatoreId(organizzatore);
+        newEvento.setOrganizzatoreId(utenteCorrente);
 
 
         // salvo il nuovo record

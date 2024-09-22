@@ -1,6 +1,7 @@
 package brianpelinku.u5w3d5_gestione_eventi.controllers;
 
 import brianpelinku.u5w3d5_gestione_eventi.entities.Evento;
+import brianpelinku.u5w3d5_gestione_eventi.entities.Utente;
 import brianpelinku.u5w3d5_gestione_eventi.exceptions.BadRequestException;
 import brianpelinku.u5w3d5_gestione_eventi.payloads.NewEventoDTO;
 import brianpelinku.u5w3d5_gestione_eventi.payloads.NewEventoRespDTO;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,7 @@ public class EventiController {
     @PostMapping
     @PreAuthorize("hasAuthority('ORGANIZZATORE_EVENTI')")
     @ResponseStatus(HttpStatus.CREATED)
-    public NewEventoRespDTO saveEvento(@RequestBody @Validated NewEventoDTO evento, BindingResult validation) {
+    public NewEventoRespDTO saveEvento(@RequestBody @Validated NewEventoDTO evento, BindingResult validation, @AuthenticationPrincipal Utente utenteCorrente) {
         if (validation.hasErrors()) {
             String messages = validation
                     .getAllErrors()
@@ -34,7 +36,7 @@ public class EventiController {
                     .collect(Collectors.joining(". "));
             throw new BadRequestException("Segnalazione Errori nel Payload. " + messages);
         } else {
-            return new NewEventoRespDTO(this.eventiService.saveEvento(evento).eventoId());
+            return new NewEventoRespDTO(this.eventiService.saveEvento(evento, utenteCorrente).eventoId());
         }
     }
 

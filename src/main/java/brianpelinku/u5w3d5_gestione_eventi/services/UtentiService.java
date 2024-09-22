@@ -24,14 +24,27 @@ public class UtentiService {
     @Autowired
     private PasswordEncoder bcrypt;
 
+    public Utente findByEmail(String email) {
+        return utenteRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'utente con l'email " + email + " non è stato trovato."));
+    }
+
     public NewUtenteRespDTO saveUtente(NewUtenteDTO body) {
 
         this.utenteRepository.findByEmail(body.email()).ifPresent(author -> {
             throw new BadRequestException("L'email " + body.email() + " è già in uso.");
         });
 
+        RuoloUtente ruoloUtente;
 
-        Utente newUtente = new Utente(body.nome(), body.cognome(), body.email(), bcrypt.encode(body.password()), RuoloUtente.valueOf(body.ruolo()));
+        try {
+            ruoloUtente = RuoloUtente.valueOf(body.ruolo().toUpperCase());
+            if (ruoloUtente == RuoloUtente.ADMIN)
+                throw new BadRequestException("Errore. Nessuno può inserirsi come ADMIN");
+        } catch (Exception e) {
+            throw new BadRequestException("Errore. Il ruolo inserito non esiste.");
+        }
+
+        Utente newUtente = new Utente(body.nome(), body.cognome(), body.email(), bcrypt.encode(body.password()), ruoloUtente);
 
         // salvo il nuovo record
         return new NewUtenteRespDTO(this.utenteRepository.save(newUtente).getId());
@@ -55,8 +68,5 @@ public class UtentiService {
         this.utenteRepository.delete(trovato);
     }
 
-    public Utente findByEmail(String email) {
-        return utenteRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("L'utente con l'email " + email + " non è stato trovato."));
-    }
 
 }

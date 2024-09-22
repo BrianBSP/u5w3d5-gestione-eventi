@@ -2,7 +2,6 @@ package brianpelinku.u5w3d5_gestione_eventi.payloads;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record NewUtenteDTO(
@@ -19,7 +18,7 @@ public record NewUtenteDTO(
         @NotEmpty(message = "Inserisci una password.")
         String password,
 
-        @NotNull(message = "Campo obbligatorio. Inserisci un ruolo")
+        @NotEmpty(message = "Campo obbligatorio. Inserisci un ruolo")
         String ruolo
 ) {
 }
